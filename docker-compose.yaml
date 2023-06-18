@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: webserver
+    ports:
+      - "80:80"
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  php-fpm:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: php-fpm
+    volumes:
+       - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  db:
+    container_name: mariadb
+    image: mariadb:10.5
+    command: [ '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+    restart: always
+    networks:
+      - app-network
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: testtask
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: 12345678
+      MYSQL_ROOT_PASSWORD: 12345678
+    volumes:
+      - ./db:/var/lib/mysql
+
+networks:
+  app-network:
+    driver: bridge
