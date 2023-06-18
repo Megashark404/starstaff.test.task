@@ -1,3 +1,6 @@
 /idea
 /db
 /.db
+code/basic/vendor
+code/basic/composer.json
+code/basic/composer.lock
